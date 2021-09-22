@@ -41,8 +41,8 @@ def bootstrapped_roc(true, pred, n_boots=200):
       tprs[iboot] = spline(newx)
    return newx, tprs.mean(axis=1), tprs.std(axis=1)
 
-root=['TT_Run3_2021', 'TT_Run3_2023', 'TT_Run3_2024', "TT_Run2_2018"]
-#root=["QCD_Run3_2024", "QCD_Run3_2024_w", "QCD_Run3_2024"]
+root=['TT_Run3_2021', 'TT_Run3_2023', 'TT_Run3_2024']
+#root=["QCD_Run3_2021", "QCD_Run3_2023", "QCD_Run3_2024"]
 data0 = pd.DataFrame(
    root_numpy.root2array(
       #args.infile,
@@ -50,7 +50,7 @@ data0 = pd.DataFrame(
       #'TTBar_RelVal.root', #'TTBar.root', 
       'bTaggingExerciseIIAK4Jets/tree')
    )
-data0 = data0[(data0.jet_pt > 1000) & (np.abs(data0.jet_eta) <= 2.5)  & (data0.pu > 55) & (data0.pu < 65) ]
+data0 = data0[(data0.jet_pt > 30) & (np.abs(data0.jet_eta) <= 1.4) & (data0.pu < 65) ]
 
 data1 = pd.DataFrame(
    root_numpy.root2array(
@@ -59,7 +59,7 @@ data1 = pd.DataFrame(
       #'TTBar_RelVal.root', #'TTBar.root',
       'bTaggingExerciseIIAK4Jets/tree')
    )
-data1 = data1[(data1.jet_pt > 1000) & (np.abs(data1.jet_eta) <= 2.5) & (data1.pu > 55) & (data1.pu < 65)]
+data1 = data1[(data1.jet_pt > 30) & (np.abs(data1.jet_eta) <= 1.4)  & (data1.pu < 65) ]
 
 data2 = pd.DataFrame(
    root_numpy.root2array(
@@ -68,8 +68,9 @@ data2 = pd.DataFrame(
       #'TTBar_RelVal.root', #'TTBar.root',
       'bTaggingExerciseIIAK4Jets/tree')
    )
-data2 = data2[(data2.jet_pt > 1000) & (np.abs(data2.jet_eta) <= 2.5) & (data2.pu > 55) & (data2.pu < 65)]
+data2 = data2[(data2.jet_pt > 30) & (np.abs(data2.jet_eta) <= 1.4)  & (data2.pu < 65) ]
 
+"""
 data3 = pd.DataFrame(
    root_numpy.root2array(
       #args.infile,
@@ -77,8 +78,8 @@ data3 = pd.DataFrame(
       #'TTBar_RelVal.root', #'TTBar.root',
       'bTaggingExerciseIIAK4Jets/tree')
    )
-data3 = data3[(data3.jet_pt > 1000) & (np.abs(data3.jet_eta) <= 2.5) & (data3.pu > 55) & (data3.pu < 65)]
-
+data3 = data3[(data3.jet_pt > 30) & (np.abs(data3.jet_eta) < 2.5)]
+"""
 """HEM_15_16 = data[(data.jet_eta < -1.5) & \
                     (data.jet_eta > -2.5) & \
                     (data.jet_phi < -0.6) & \
@@ -118,11 +119,11 @@ for what, bkg in [('BvsL', 0), ('BvsC', 4)]:
    plt.clf()
 """
 data=data0
-discr= ['DeepCSV','DeepFlavour']
+discr= ['CSVv2', 'DeepCSV', 'DeepFlavour']
 #count=0
-for i in range(0,2):
+for i in range(0,3):
  count=0
- for disc, color in [(discr[i], 'r'), (discr[i], 'g'), (discr[i], 'b'), (discr[i], 'k')]:
+ for disc, color in [(discr[i], 'r'), (discr[i], 'g'), (discr[i], 'b')]:
    disc_mask = np.ones(data.shape[0]).astype(bool) #(data[disc] >= 0)
    print disc
    count=count+1
@@ -148,10 +149,10 @@ for i in range(0,2):
    plt.plot(eff, fakes, color+'--')
    if count==1: data=data1
    if count==2: data=data2
-   if count==3: data=data3
+ #  if count==3: break
  plt.ylabel('Mistag Rate')
  plt.xlabel('b-efficiency')
- plt.title('TT_%s jets: pT>1000 GeV |eta|<=2.5 pu=(55, 65)' %(discr[i]))
+ plt.title('%s jets: pT > 30 GeV |eta| <= 1.4 pu < 65 ' %(discr[i]))
  plt.legend(loc='best') 
  plt.ylim(5e-4, 1)
  plt.gca().set_yscale('log')
